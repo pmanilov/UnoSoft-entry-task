@@ -26,7 +26,7 @@ public class Main {
             }
         }
         System.out.println("Число групп с более чем одним элементом: " + count);
-        writeGroupsToTxt(lines, groups, "result.txt");
+        writeGroupsToTxt(lines, groups, count, "result.txt");
         long endTime = System.currentTimeMillis();
         long executionTime = endTime - startTime;
         System.out.println("Время выполнения программы: " + executionTime / 1000.0 + " секунд");
@@ -53,8 +53,9 @@ public class Main {
         return lines;
     }
 
-    public static void writeGroupsToTxt(List<List<String>> lines, List<List<Integer>> groups, String fileName) {
+    public static void writeGroupsToTxt(List<List<String>> lines, List<List<Integer>> groups, int count, String fileName) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName))) {
+            writer.write(count + "\n");
             for (int i = 0; i < groups.size(); i++) {
                 writer.write("Группа " + (i + 1) +"\n");
                 for (Integer index : groups.get(i)) {
