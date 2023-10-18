@@ -12,9 +12,7 @@ public class Main {
             System.exit(1);
         }
         String inputFileName = args[0];
-        Set<List<String>> setLines = readLinesFromTxt(inputFileName);
-        List<List<String>> lines = setLines.stream().toList();
-        setLines.clear();
+        List<List<String>> lines = readLinesFromTxt(inputFileName).stream().toList();
         List<List<Integer>> groups = group(lines);
         Collections.sort(groups, Comparator.comparingInt((List<Integer> list) -> list.size()).reversed());
         int count = 0;
@@ -38,9 +36,10 @@ public class Main {
             String line;
             while ((line = reader.readLine()) != null) {
                 if (isValidLine(line)) {
-                    List<String> lineList = new ArrayList<>(Arrays.stream(line.split("(\";\")")).toList());
-                    lineList.set(0, lineList.get(0).replace("\"", ""));
-                    lineList.set(lineList.size() - 1, lineList.get(lineList.size() - 1).replace("\"", ""));
+                    List<String> lineList = new ArrayList<>(Arrays.stream(line.split(";", -1)).toList());
+                    /*for (int i = 0; i < lineList.size(); i++) {
+                        lineList.set(i, lineList.get(i).replaceAll("\"", ""));
+                    }*/
                     lines.add(lineList);
                     if(lineList.size() > maxElements) {
                         maxElements = lineList.size();
@@ -59,10 +58,12 @@ public class Main {
             for (int i = 0; i < groups.size(); i++) {
                 writer.write("Группа " + (i + 1) +"\n");
                 for (Integer index : groups.get(i)) {
-                    StringBuilder line = new StringBuilder("\"");
+                    //StringBuilder line = new StringBuilder("\"");
+                    StringBuilder line = new StringBuilder();
                     for (int j = 0; j < lines.get(index).size(); j++) {
                         line.append(lines.get(index).get(j));
-                        String separator = j == lines.get(index).size() - 1 ? "\"" : "\";\"";
+                        //String separator = j == lines.get(index).size() - 1 ? "\"" : "\";\"";
+                        String separator = j == lines.get(index).size() - 1 ? "" : ";";
                         line.append(separator);
                     }
                     writer.write(line + "\n");
@@ -74,45 +75,45 @@ public class Main {
     }
 
     private static boolean isValidLine(String line) {
-        return line.matches("\"\\d*\";(\"\\d*\";)*\"\\d*\"");
+        return line.matches("(\"[\\d+.]*\";|;)+(\"[\\d+.]*\"|)?");
     }
 
     private static List<List<Integer>> group(List<List<String>> lines) {
         Map<Integer, Set<Integer>> groupIndex = new HashMap<>();
         for (int j = 0; j < maxElements; j++) {
-            Map<String, List<Integer>> groupColumn = new HashMap<>();
+            Map<String, Set<Integer>> groupColumn = new HashMap<>();
             for (int i = 0; i < lines.size(); i++) {
                 if (j >= lines.get(i).size() || lines.get(i).get(j).isEmpty()) {
                     continue;
                 }
                 if (!groupColumn.containsKey(lines.get(i).get(j))) {
-                    groupColumn.put(lines.get(i).get(j), new ArrayList<>());
+                    groupColumn.put(lines.get(i).get(j), new HashSet<>());
 
                 }
                 groupColumn.get(lines.get(i).get(j)).add(i);
             }
-            for (List<Integer> group : groupColumn.values()) {
-                for (int k = 0; k < group.size(); k++) {
-                    if (!groupIndex.containsKey(group.get(k))) {
-                        groupIndex.put(group.get(k), new HashSet<>(group));
+            for (Set<Integer> group : groupColumn.values()) {
+                for (Integer value : group) {
+                    if (!groupIndex.containsKey(value)) {
+                        groupIndex.put(value, group);
                     } else {
-                        groupIndex.get(group.get(k)).addAll(group);
+                        groupIndex.get(value).addAll(group);
                     }
                 }
             }
         }
-        List<Integer> visited = new ArrayList<>();
+        int[] visited = new int[lines.size()];
         List<List<Integer>> result = new ArrayList<>();
         for(Map.Entry<Integer, Set<Integer>> group : groupIndex.entrySet()) {
-            if(visited.contains(group.getKey())){
+            if(visited[group.getKey()] != 0){
                 continue;
             }
             for (Integer value : group.getValue()) {
                 if(!value.equals(group.getKey())){
-                    visited.add(value);
+                    visited[value] = 1;
                 }
             }
-            result.add(new ArrayList<>(group.getValue()));
+            result.add(group.getValue().stream().toList());
         }
         return result;
     }
