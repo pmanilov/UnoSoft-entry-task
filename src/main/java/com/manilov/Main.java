@@ -36,10 +36,7 @@ public class Main {
             String line;
             while ((line = reader.readLine()) != null) {
                 if (isValidLine(line)) {
-                    List<String> lineList = new ArrayList<>(Arrays.stream(line.split(";", -1)).toList());
-                    /*for (int i = 0; i < lineList.size(); i++) {
-                        lineList.set(i, lineList.get(i).replaceAll("\"", ""));
-                    }*/
+                    List<String> lineList = new ArrayList<>(Arrays.stream(line.replaceAll("\"", "").split(";", -1)).toList());
                     lines.add(lineList);
                     if(lineList.size() > maxElements) {
                         maxElements = lineList.size();
@@ -61,7 +58,9 @@ public class Main {
                     //StringBuilder line = new StringBuilder("\"");
                     StringBuilder line = new StringBuilder();
                     for (int j = 0; j < lines.get(index).size(); j++) {
-                        line.append(lines.get(index).get(j));
+                        if(!lines.get(index).get(j).isEmpty()) {
+                            line.append("\"").append(lines.get(index).get(j)).append("\"");
+                        }
                         //String separator = j == lines.get(index).size() - 1 ? "\"" : "\";\"";
                         String separator = j == lines.get(index).size() - 1 ? "" : ";";
                         line.append(separator);
@@ -75,7 +74,7 @@ public class Main {
     }
 
     private static boolean isValidLine(String line) {
-        return line.matches("(\"[\\d+.]*\";|;)+(\"[\\d+.]*\"|)?");
+        return line.matches("(\"[\\d.]*\";|;)+(\"[\\d.]*\")?");
     }
 
     private static List<List<Integer>> group(List<List<String>> lines) {
