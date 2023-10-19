@@ -4,7 +4,9 @@ import java.io.*;
 import java.util.*;
 
 public class Main {
+
     private static int maxElements = 0;
+
     public static void main(String[] args) {
         long startTime = System.currentTimeMillis();
         if (args.length != 1) {
@@ -99,10 +101,8 @@ public class Main {
                         if(!groups.containsKey(countGroups)) {
                             groups.put(countGroups, group);
                         }
-                        indexSet.add(countGroups);
-                    } else {
-                        indexSet.add(groupIndex.get(value));
                     }
+                    indexSet.add(groupIndex.get(value));
                 }
                 List<Integer> indexList = indexSet.stream().toList();
                 if(indexList.size() > 1){
