@@ -99,6 +99,7 @@ public class Main {
                         if(!groups.containsKey(countGroups)) {
                             groups.put(countGroups, group);
                         }
+                        indexSet.add(countGroups);
                     } else {
                         indexSet.add(groupIndex.get(value));
                     }
@@ -123,16 +124,9 @@ public class Main {
                 countGroups++;
             }
         }
-        int[] visited = new int[lines.size()];
         List<List<Integer>> result = new ArrayList<>();
-        for(Map.Entry<Integer, Set<Integer>> group : groups.entrySet()) {
-            if(visited[group.getKey()] != 0){
-                continue;
-            }
-            for (Integer value : group.getValue()) {
-                    visited[groupIndex.get(value)] = 1;
-            }
-            result.add(group.getValue().stream().toList());
+        for(Set<Integer> group : groups.values()) {
+            result.add(group.stream().toList());
         }
         return result;
     }
