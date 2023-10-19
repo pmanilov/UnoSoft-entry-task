@@ -94,6 +94,7 @@ public class Main {
                 groupColumn.get(lines.get(i).get(j)).add(i);
             }
             for (Set<Integer> group : groupColumn.values()) {
+                Set<Integer> indexSet = new HashSet<>();
                 for (Integer value : group) {
                     if (!groupIndex.containsKey(value)) {
                         groupIndex.put(value, countGroups);
@@ -101,8 +102,25 @@ public class Main {
                             groups.put(countGroups, group);
                         }
                     } else {
-                        groups.get(groupIndex.get(value)).addAll(group);
+                        indexSet.add(groupIndex.get(value));
                     }
+                }
+                List<Integer> indexList = indexSet.stream().toList();
+                if(indexList.size() > 1){
+                    int mainIndex = indexList.get(0);
+                    Set<Integer> localGroup = new HashSet<>();
+                    for (int i = 1; i < indexList.size(); i++) {
+                        for(Integer index : groups.get(indexList.get(i))) {
+                            groupIndex.put(index, mainIndex);
+                        }
+                        localGroup.addAll(groups.get(indexList.get(i)));
+                        groups.remove(indexList.get(i));
+                    }
+                    groups.get(mainIndex).addAll(group);
+                    groups.get(mainIndex).addAll(localGroup);
+                } else if(indexList.size() == 1){
+                    int index = indexList.get(0);
+                    groups.get(index).addAll(group);
                 }
                 countGroups++;
             }
@@ -118,10 +136,6 @@ public class Main {
             }
             result.add(group.getValue().stream().toList());
         }
-        /*for(Map.Entry<Integer, Set<Integer>> group : groups.entrySet()) {
-            result.add(group.getValue().stream().toList());
-        }*/
         return result;
     }
-
 }
