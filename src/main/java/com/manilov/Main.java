@@ -51,7 +51,7 @@ public class Main {
         return lines;
     }
 
-    public static void writeGroupsToTxt(List<List<String>> lines, List<List<Integer>> groups, int count, String fileName) {
+    private static void writeGroupsToTxt(List<List<String>> lines, List<List<Integer>> groups, int count, String fileName) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName))) {
             writer.write(count + "\n");
             for (int i = 0; i < groups.size(); i++) {
