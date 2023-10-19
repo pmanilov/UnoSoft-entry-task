@@ -36,7 +36,7 @@ public class Main {
             String line;
             while ((line = reader.readLine()) != null) {
                 if (isValidLine(line)) {
-                    List<String> lineList = new ArrayList<>(Arrays.stream(line.split(";", -1)).toList());
+                    List<String> lineList = new ArrayList<>(Arrays.stream(line.replaceAll("\"", "").split(";", -1)).toList());
                     lines.add(lineList);
                     if(lineList.size() > maxElements) {
                         maxElements = lineList.size();
@@ -55,11 +55,11 @@ public class Main {
             for (int i = 0; i < groups.size(); i++) {
                 writer.write("Группа " + (i + 1) +"\n");
                 for (Integer index : groups.get(i)) {
-                    //StringBuilder line = new StringBuilder("\"");
                     StringBuilder line = new StringBuilder();
                     for (int j = 0; j < lines.get(index).size(); j++) {
-                        line.append(lines.get(index).get(j));
-                        //String separator = j == lines.get(index).size() - 1 ? "\"" : "\";\"";
+                        if(!lines.get(index).get(j).isEmpty()) {
+                            line.append("\"").append(lines.get(index).get(j)).append("\"");
+                        }
                         String separator = j == lines.get(index).size() - 1 ? "" : ";";
                         line.append(separator);
                     }
