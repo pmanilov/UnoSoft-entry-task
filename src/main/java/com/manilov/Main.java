@@ -36,7 +36,7 @@ public class Main {
             String line;
             while ((line = reader.readLine()) != null) {
                 if (isValidLine(line)) {
-                    List<String> lineList = new ArrayList<>(Arrays.stream(line.replaceAll("\"", "").split(";", -1)).toList());
+                    List<String> lineList = new ArrayList<>(Arrays.stream(line.split(";", -1)).toList());
                     lines.add(lineList);
                     if(lineList.size() > maxElements) {
                         maxElements = lineList.size();
@@ -78,7 +78,9 @@ public class Main {
     }
 
     private static List<List<Integer>> group(List<List<String>> lines) {
-        Map<Integer, Set<Integer>> groupIndex = new HashMap<>();
+        Map<Integer, Integer> groupIndex = new HashMap<>();
+        Map<Integer, Set<Integer>> groups = new HashMap<>();
+        int countGroups = 0;
         for (int j = 0; j < maxElements; j++) {
             Map<String, Set<Integer>> groupColumn = new HashMap<>();
             for (int i = 0; i < lines.size(); i++) {
@@ -94,26 +96,32 @@ public class Main {
             for (Set<Integer> group : groupColumn.values()) {
                 for (Integer value : group) {
                     if (!groupIndex.containsKey(value)) {
-                        groupIndex.put(value, group);
+                        groupIndex.put(value, countGroups);
+                        if(!groups.containsKey(countGroups)) {
+                            groups.put(countGroups, group);
+                        }
                     } else {
-                        groupIndex.get(value).addAll(group);
+                        groups.get(groupIndex.get(value)).addAll(group);
                     }
                 }
+                countGroups++;
             }
         }
         int[] visited = new int[lines.size()];
         List<List<Integer>> result = new ArrayList<>();
-        for(Map.Entry<Integer, Set<Integer>> group : groupIndex.entrySet()) {
+        for(Map.Entry<Integer, Set<Integer>> group : groups.entrySet()) {
             if(visited[group.getKey()] != 0){
                 continue;
             }
             for (Integer value : group.getValue()) {
-                if(!value.equals(group.getKey())){
-                    visited[value] = 1;
-                }
+                    visited[groupIndex.get(value)] = 1;
             }
             result.add(group.getValue().stream().toList());
         }
+        /*for(Map.Entry<Integer, Set<Integer>> group : groups.entrySet()) {
+            result.add(group.getValue().stream().toList());
+        }*/
         return result;
     }
+
 }
