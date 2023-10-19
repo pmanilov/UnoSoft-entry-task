@@ -58,9 +58,7 @@ public class Main {
                     //StringBuilder line = new StringBuilder("\"");
                     StringBuilder line = new StringBuilder();
                     for (int j = 0; j < lines.get(index).size(); j++) {
-                        if(!lines.get(index).get(j).isEmpty()) {
-                            line.append("\"").append(lines.get(index).get(j)).append("\"");
-                        }
+                        line.append(lines.get(index).get(j));
                         //String separator = j == lines.get(index).size() - 1 ? "\"" : "\";\"";
                         String separator = j == lines.get(index).size() - 1 ? "" : ";";
                         line.append(separator);
