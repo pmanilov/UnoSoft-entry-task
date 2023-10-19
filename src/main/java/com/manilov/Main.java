@@ -38,7 +38,7 @@ public class Main {
             String line;
             while ((line = reader.readLine()) != null) {
                 if (isValidLine(line)) {
-                    List<String> lineList = new ArrayList<>(Arrays.stream(line.replaceAll("\"", "").split(";", -1)).toList());
+                    List<String> lineList = new ArrayList<>(Arrays.stream(line.split(";", -1)).toList());
                     lines.add(lineList);
                     if(lineList.size() > maxElements) {
                         maxElements = lineList.size();
@@ -59,13 +59,12 @@ public class Main {
                 for (Integer index : groups.get(i)) {
                     StringBuilder line = new StringBuilder();
                     for (int j = 0; j < lines.get(index).size(); j++) {
-                        if(!lines.get(index).get(j).isEmpty()) {
-                            line.append("\"").append(lines.get(index).get(j)).append("\"");
-                        }
+                        line.append(lines.get(index).get(j));
                         String separator = j == lines.get(index).size() - 1 ? "" : ";";
                         line.append(separator);
                     }
-                    writer.write(line + "\n");
+                    line.append("\n");
+                    writer.write(line.toString());
                 }
             }
         } catch (IOException e) {
@@ -84,7 +83,7 @@ public class Main {
         for (int j = 0; j < maxElements; j++) {
             Map<String, Set<Integer>> groupColumn = new HashMap<>();
             for (int i = 0; i < lines.size(); i++) {
-                if (j >= lines.get(i).size() || lines.get(i).get(j).isEmpty()) {
+                if (j >= lines.get(i).size() || lines.get(i).get(j).isEmpty() || lines.get(i).get(j).equals("\"\"")) {
                     continue;
                 }
                 if (!groupColumn.containsKey(lines.get(i).get(j))) {
